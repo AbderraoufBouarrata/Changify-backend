@@ -4,6 +4,7 @@ import { ExchangeCurrencyModule } from './exchange-currency/exchange-currency.mo
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
+import { CurrenciesModule } from './currencies/currencies.module';
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
         ExchangeCurrencyModule,
         ScheduleModule.forRoot(),
         PrismaModule,
+        CurrenciesModule,
     ],
     controllers: [],
     providers: [],

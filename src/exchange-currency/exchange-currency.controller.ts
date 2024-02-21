@@ -1,34 +1,28 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { ExchangeCurrencyService } from './exchange-currency.service';
-import { CreateExchangeCurrencyDto } from './dto/create-exchange-currency.dto';
-import { UpdateExchangeCurrencyDto } from './dto/update-exchange-currency.dto';
+import { ExchangeCurrencyDto } from './dto/exchange-currency.dto';
 
 @Controller('exchange-currency')
 export class ExchangeCurrencyController {
-  constructor(private readonly exchangeCurrencyService: ExchangeCurrencyService) {}
+    constructor(
+        private readonly exchangeCurrencyService: ExchangeCurrencyService,
+    ) {}
 
-  @Post()
-  create(@Body() createExchangeCurrencyDto: CreateExchangeCurrencyDto) {
-    return this.exchangeCurrencyService.create(createExchangeCurrencyDto);
-  }
+    @Get()
+    findOne(
+        @Query('base') base: string,
+        @Query('amount') amount: number,
+        @Query('to') to: string,
+    ) {
+        return this.exchangeCurrencyService.convertCurrency({
+            base: base,
+            amount: amount,
+            to: to,
+        });
+    }
 
-  @Get()
-  findAll() {
-    return this.exchangeCurrencyService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.exchangeCurrencyService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExchangeCurrencyDto: UpdateExchangeCurrencyDto) {
-    return this.exchangeCurrencyService.update(+id, updateExchangeCurrencyDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.exchangeCurrencyService.remove(+id);
-  }
+    @Post()
+    create(@Body() body: ExchangeCurrencyDto) {
+        return this.exchangeCurrencyService.convertCurrency(body);
+    }
 }

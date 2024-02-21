@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CreateExchangeRateDto } from './dto/create-exchange-rate.dto';
-import { UpdateExchangeRateDto } from './dto/update-exchange-rate.dto';
+
 import { ConfigService } from '@nestjs/config';
 import { Cron } from '@nestjs/schedule';
 import { importantCurrencies } from 'src/assets/importantCurrencies';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { isValidCurrency } from 'src/utils/isValidCurrency';
 
 @Injectable()
 export class ExchangeRatesService {
@@ -72,31 +72,39 @@ export class ExchangeRatesService {
         }
     }
 
-    getRatesForCurrency(currency: string) {
-        return this.prisma.exchangeRate.findMany({
-            where: {
-                fromCurrency: currency,
-            },
-        });
-    }
-
-    create(CreateExchangeRateDto: CreateExchangeRateDto) {
-        return 'This action adds a new exchangeRate';
-    }
-
-    findAll() {
-        return `This action returns all exchangeRates`;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${id} exchangeRate`;
-    }
-
-    update(id: number, updateExchangeRateDto: UpdateExchangeRateDto) {
-        return `This action updates a #${id} exchangeRate`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} exchangeRate`;
+    async getRatesForCurrency(currency: string) {
+        if (!isValidCurrency(currency)) {
+            this.logger.error('invalid currency code');
+            return {
+                status: 'error',
+                message: 'invalid currency code entered',
+            };
+        }
+        try {
+            const result = await this.prisma.exchangeRate.findMany({
+                where: {
+                    fromCurrency: currency,
+                },
+                select: {
+                    fromCurrency: true,
+                    toCurrency: true,
+                    rate: true,
+                },
+            });
+            if (result.length > 0) {
+                return result;
+            } else
+                return {
+                    status: 'error',
+                    message:
+                        "Couldn't get the exchange rates for that currency, please check the spelling and our API supported currencies then try again",
+                };
+        } catch (error) {
+            this.logger.error('Error happened while getting rates: ' + error);
+            return {
+                status: 'error',
+                message: "Couldn't get the exchange rates",
+            };
+        }
     }
 }
