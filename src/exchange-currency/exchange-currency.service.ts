@@ -40,10 +40,8 @@ export class ExchangeCurrencyService {
             // SECOND: We look for the exchange rate in the database
             const result = await this.prisma.exchangeRate.findMany({
                 where: {
-                    OR: [
-                        { fromCurrency: base, toCurrency: to },
-                        { fromCurrency: to, toCurrency: base },
-                    ],
+                    fromCurrency: base,
+                    toCurrency: to,
                 },
                 select: {
                     fromCurrency: true,
@@ -98,10 +96,8 @@ export class ExchangeCurrencyService {
                 // SIXTH: Get the value we need from the newly saved rows, do the math and return the res
                 const row = await this.prisma.exchangeRate.findMany({
                     where: {
-                        OR: [
-                            { fromCurrency: base, toCurrency: to },
-                            { fromCurrency: to, toCurrency: base },
-                        ],
+                        fromCurrency: base,
+                        toCurrency: to,
                     },
                     select: {
                         fromCurrency: true,
