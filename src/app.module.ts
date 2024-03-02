@@ -5,6 +5,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { CurrenciesModule } from './currencies/currencies.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { CurrenciesModule } from './currencies/currencies.module';
         ScheduleModule.forRoot(),
         PrismaModule,
         CurrenciesModule,
+        MailModule,
     ],
     controllers: [],
     providers: [],
