@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
@@ -24,6 +24,14 @@ async function bootstrap() {
 
     app.setGlobalPrefix('/api/v1');
 
-    await app.listen(3333);
+    Logger.log(
+        configService.get<number>('PORT'),
+        configService.get<string>('HOSTNAME'),
+    );
+
+    await app.listen(
+        configService.get<number>('PORT'),
+        configService.get<string>('HOST'),
+    );
 }
 bootstrap();
